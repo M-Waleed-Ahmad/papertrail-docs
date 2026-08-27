@@ -1,0 +1,9 @@
+Customer interview — Northstar Studio
+
+The team writes product decisions in several places and often loses the final version after feedback arrives in chat.
+
+They want one document that can begin as a rough draft, be shared with the right person, and still be easy to find a week later.
+
+Follow-up
+
+Ask whether a viewer-only role would be useful after the initial editor-sharing workflow is in place.
