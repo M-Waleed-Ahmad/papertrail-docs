@@ -17,7 +17,7 @@ Original imported files are parsed into editable documents and then discarded. P
 ## Local setup
 
 1. Create a Supabase project.
-2. Run [`supabase/migrations/0001_initial.sql`](supabase/migrations/0001_initial.sql) in the Supabase SQL Editor, or apply it through the Supabase CLI. If you created Supabase Auth accounts before that migration, also run [`supabase/migrations/0002_backfill_profiles.sql`](supabase/migrations/0002_backfill_profiles.sql) once.
+2. Run the Supabase migrations in order: [`0001_initial.sql`](supabase/migrations/0001_initial.sql), [`0002_backfill_profiles.sql`](supabase/migrations/0002_backfill_profiles.sql), and [`0003_create_document_rpc.sql`](supabase/migrations/0003_create_document_rpc.sql). The second is safe when no backfill is needed; the third is the authenticated write path for blank documents and imports.
 3. In Supabase Auth, create the reviewer accounts described below. Confirm their email addresses and set `display_name` in each user’s metadata before creation, for example `{ "display_name": "Maya Chen" }`.
 4. Copy `.env.example` to `.env.local` and add the project URL and publishable key from Supabase’s Connect dialog.
 5. Install dependencies and start the app:

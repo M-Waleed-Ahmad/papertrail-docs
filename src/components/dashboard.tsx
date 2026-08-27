@@ -51,12 +51,13 @@ export function Dashboard() {
   async function createDocument() {
     if (!state) return;
     setBusy(true); setError(null);
-    const { data, error: insertError } = await createClient().from("documents").insert({
-      owner_id: state.user.id, title: "Untitled document", content: emptyDocument, plain_text: "", source_type: "blank",
-    }).select("id").single();
+    const { data, error: insertError } = await createClient().rpc("create_document", {
+      p_title: "Untitled document", p_content: emptyDocument, p_plain_text: "", p_source_type: "blank", p_original_name: null,
+    });
+    const created = (Array.isArray(data) ? data[0] : data) as { id: string } | null;
     setBusy(false);
-    if (insertError || !data) return setError(insertError?.message ?? "The document could not be created. Please try again.");
-    router.push(`/documents/${data.id}`);
+    if (insertError || !created) return setError(insertError?.message ?? "The document could not be created. Please try again.");
+    router.push(`/documents/${created.id}`);
   }
 
   async function importDocument(event: React.ChangeEvent<HTMLInputElement>) {
@@ -68,16 +69,16 @@ export function Dashboard() {
       const { extension, title } = importFile(file);
       const raw = await file.text();
       const content = extension === "md" ? markdownToDocument(raw) : textToDocument(raw);
-      const { data, error: insertError } = await createClient().from("documents").insert({
-        owner_id: state.user.id,
-        title: title.slice(0, 160),
-        content,
-        plain_text: documentPlainText(content),
-        source_type: extension === "md" ? "markdown" : "txt",
-        original_name: file.name,
+      const { data, error: insertError } = await createClient().rpc("create_document", {
+        p_title: title.slice(0, 160),
+        p_content: content,
+        p_plain_text: documentPlainText(content),
+        p_source_type: extension === "md" ? "markdown" : "txt",
+        p_original_name: file.name,
       }).select("id").single();
-      if (insertError || !data) throw new Error(insertError?.message ?? "The import could not be saved. Please try again.");
-      router.push(`/documents/${data.id}`);
+      const created = (Array.isArray(data) ? data[0] : data) as { id: string } | null;
+      if (insertError || !created) throw new Error(insertError?.message ?? "The import could not be saved. Please try again.");
+      router.push(`/documents/${created.id}`);
     } catch (importError) {
       setError(importError instanceof Error ? importError.message : "The import failed. Please try again.");
     } finally {
