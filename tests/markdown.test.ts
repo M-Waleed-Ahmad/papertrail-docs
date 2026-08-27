@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { importFile, markdownToDocument, textToDocument } from "@/lib/markdown";
+import { importFile, markdownToDocument, textToDocument } from "../src/lib/markdown";
 
 describe("document import", () => {
   it("converts common Markdown formatting into TipTap JSON", () => {
