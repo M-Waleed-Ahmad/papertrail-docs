@@ -28,6 +28,7 @@ export function Dashboard() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   async function load() {
     const supabase = createClient();
@@ -37,8 +38,12 @@ export function Dashboard() {
       supabase.from("profiles").select("id, display_name, email").eq("id", user.id).single(),
       supabase.from("documents").select("id, owner_id, title, content, plain_text, source_type, original_name, created_at, updated_at").order("updated_at", { ascending: false }),
     ]);
-    if (documentsError || !profile) return setError("We could not load your workspace. Refresh and try again.");
-    setState({ user: profile as Profile, documents: (documents ?? []) as DocumentRow[] });
+    if (documentsError || !profile) {
+      setError(documentsError?.message ?? "Your profile is missing. Run the profile backfill migration, then refresh.");
+    } else {
+      setState({ user: profile as Profile, documents: (documents ?? []) as DocumentRow[] });
+    }
+    setLoading(false);
   }
 
   useEffect(() => { void load(); }, []);
@@ -50,7 +55,7 @@ export function Dashboard() {
       owner_id: state.user.id, title: "Untitled document", content: emptyDocument, plain_text: "", source_type: "blank",
     }).select("id").single();
     setBusy(false);
-    if (insertError || !data) return setError("The document could not be created. Please try again.");
+    if (insertError || !data) return setError(insertError?.message ?? "The document could not be created. Please try again.");
     router.push(`/documents/${data.id}`);
   }
 
@@ -71,7 +76,7 @@ export function Dashboard() {
         source_type: extension === "md" ? "markdown" : "txt",
         original_name: file.name,
       }).select("id").single();
-      if (insertError || !data) throw new Error("The import could not be saved. Please try again.");
+      if (insertError || !data) throw new Error(insertError?.message ?? "The import could not be saved. Please try again.");
       router.push(`/documents/${data.id}`);
     } catch (importError) {
       setError(importError instanceof Error ? importError.message : "The import failed. Please try again.");
@@ -80,7 +85,7 @@ export function Dashboard() {
     }
   }
 
-  if (!state) return <main className="loading-page">Loading workspace…</main>;
+  if (!state) return <main className="loading-page">{loading ? "Loading workspace…" : error ?? "Your workspace could not be loaded."}</main>;
   const owned = state.documents.filter((document) => document.owner_id === state.user.id);
   const shared = state.documents.filter((document) => document.owner_id !== state.user.id);
 
