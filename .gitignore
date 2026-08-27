@@ -1,6 +1,7 @@
 node_modules/
 .next/
 .env*.local
+REVIEWER_CREDENTIALS.md
 coverage/
 *.tsbuildinfo
 

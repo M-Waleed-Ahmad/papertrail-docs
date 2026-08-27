@@ -2,7 +2,7 @@
 
 ## Overview
 
-Papertrail is one Next.js application deployed on Vercel. Supabase provides authentication, Postgres persistence, and Row Level Security. There is no separate API service: browser interactions use Supabase’s authenticated client and all access is enforced by database policies.
+Papertrail is one Next.js application deployed on Vercel. Supabase provides authentication, Postgres persistence, and Row Level Security. There is no separate API service: browser interactions use Supabase’s authenticated client, while database policies and one narrowly scoped creation function enforce access.
 
 ```text
 Next.js on Vercel
@@ -36,9 +36,11 @@ The migration enables RLS on every exposed table, revokes broad default privileg
 
 Private `security definer` helpers avoid recursive RLS evaluation while retaining the authenticated caller’s identity through `auth.uid()`.
 
+Document creation and imports use the `public.create_document` database function. It requires an authenticated session, derives `owner_id` from `auth.uid()` rather than browser input, validates the allowed source type and title length, and creates the record with definer privileges. Ordinary reads, updates, deletes, and membership changes remain governed by RLS.
+
 ## Import flow
 
-The dashboard accepts `.txt` and `.md` files up to 1 MB. The browser validates the file, reads it once, converts content into TipTap JSON, and inserts a new document using the signed-in user’s RLS-restricted Supabase session. The original binary is deliberately discarded after conversion.
+The dashboard accepts `.txt` and `.md` files up to 1 MB. The browser validates the file, reads it once, converts content into TipTap JSON, and invokes the authenticated creation function. The original binary is deliberately discarded after conversion.
 
 The first version supports headings, bold, italic, ordered lists, and bullet lists from Markdown. Unsupported Markdown is retained as plain text where possible.
 

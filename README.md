@@ -2,6 +2,9 @@
 
 Papertrail is a focused collaborative document editor built for the Ajaia AI-Native Full Stack Developer assignment. It supports rich-text documents, text and Markdown import, durable persistence, and database-enforced sharing.
 
+**Live app:** [papertrail-docs.vercel.app](https://papertrail-docs.vercel.app)  
+**Source:** [github.com/M-Waleed-Ahmad/papertrail-docs](https://github.com/M-Waleed-Ahmad/papertrail-docs)
+
 ## Product scope
 
 - Create, rename, edit, save, and reopen documents
@@ -31,7 +34,7 @@ Original imported files are parsed into editable documents and then discarded. P
 
 ## Reviewer accounts
 
-Create these accounts before deployment and replace the password placeholders in `SUBMISSION.md`:
+Create these accounts before deployment:
 
 | Purpose | Email | Display name |
 | --- | --- | --- |
@@ -39,7 +42,7 @@ Create these accounts before deployment and replace the password placeholders in
 | Collaborator | `collaborator@papertrail.demo` | Daniel Brooks |
 | Access-control check | `unshared@papertrail.demo` | Avery Singh |
 
-Public sign-up should be disabled for the submission deployment. The reviewer accounts demonstrate the sharing flow without exposing an account-creation surface.
+Public sign-up should be disabled for the submission deployment. The reviewer accounts demonstrate the sharing flow without exposing an account-creation surface. Copy `REVIEWER_CREDENTIALS.example.md` to the ignored `REVIEWER_CREDENTIALS.md`, fill in the real passwords, and include it in the Google Drive submission folder—not the public GitHub repository.
 
 ## Running tests
 
@@ -51,11 +54,9 @@ The included test verifies the product-relevant upload/import flow: common Markd
 
 ## Deployment
 
-1. Push the repository to GitHub.
-2. Import the repository into Vercel.
-3. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to Vercel’s project environment variables.
-4. Deploy.
-5. Verify login, importing, sharing, revocation, and refresh persistence against the production URL.
+The production deployment is live at [papertrail-docs.vercel.app](https://papertrail-docs.vercel.app). Vercel requires `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for Production and Preview deployments.
+
+Before submitting, use `WALKTHROUGH_SCRIPT.md` to record the required 3–5 minute video, paste its public link into `WALKTHROUGH_URL.txt`, and include the completed ignored `REVIEWER_CREDENTIALS.md` in the Drive folder.
 
 ## Deliberate scope cuts
 
